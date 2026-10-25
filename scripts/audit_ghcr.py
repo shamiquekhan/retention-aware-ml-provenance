@@ -31,13 +31,16 @@ def main() -> int:
             ReleaseRequirement.from_dict(item)
             for item in json.loads(args.release_requirements.read_text())
         )
-    collection=GHCRClient(token=token, username=username, transport=UrllibTransport()).collect(
-        args.owner, args.package, args.reference,
-        release_id=args.release_id,
-        audit_horizon=parse_time(args.audit_horizon),
-        release_requirements=release_requirements,
-        fetch_children=not args.no_fetch_children,
-    )
+    try:
+        collection=GHCRClient(token=token, username=username, transport=UrllibTransport()).collect(
+            args.owner, args.package, args.reference,
+            release_id=args.release_id,
+            audit_horizon=parse_time(args.audit_horizon),
+            release_requirements=release_requirements,
+            fetch_children=not args.no_fetch_children,
+        )
+    except ValueError as error:
+        parser.error(str(error))
     payload={
         'request_log': list(collection.request_log),
         'warnings': list(collection.warnings),

@@ -9,7 +9,7 @@ from typing import Any, Literal
 RetentionStatus = Literal["available", "expiring", "expired", "unknown"]
 ArchiveStatus = Literal["none", "verified", "unverified", "inaccessible"]
 ExpirationSource = Literal["observed", "derived", "unknown"]
-CollectionStatus = Literal["complete", "partial", "failed", "unknown"]
+CollectionStatus = Literal["complete", "partial", "failed", "not_requested", "unknown"]
 EdgeRelation = Literal[
     "generated_by",
     "references",
@@ -119,8 +119,10 @@ class EvidenceObject:
     def archive_verified(self) -> bool:
         if self.archive.status != "verified" or not self.archive.accessible:
             return False
-        if self.digest is None:
-            return True
+        if not self.digest or not self.archive.digest or not self.archive.archive_uri:
+            return False
+        if self.archive.verified_at is None:
+            return False
         return self.archive.digest == self.digest
 
     def survives_until(self, horizon: datetime) -> bool:
@@ -237,13 +239,13 @@ class InventorySnapshot:
             raise ValueError("inventory counters must be non-negative")
         if self.failed_requests > self.api_requests:
             raise ValueError("failed_requests cannot exceed api_requests")
-        if self.collection_status not in {"complete", "partial", "failed", "unknown"}:
+        if self.collection_status not in {"complete", "partial", "failed", "not_requested", "unknown"}:
             raise ValueError(f"invalid collection status: {self.collection_status}")
         state_names: set[str] = set()
         for name, status in self.collection_states:
             if not name or name in state_names:
                 raise ValueError(f"duplicate or empty collection state: {name}")
-            if status not in {"complete", "partial", "failed", "unknown"}:
+            if status not in {"complete", "partial", "failed", "not_requested", "unknown"}:
                 raise ValueError(f"invalid collection state: {status}")
             state_names.add(name)
         self.object_map()

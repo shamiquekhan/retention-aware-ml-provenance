@@ -8,7 +8,7 @@ from retention_governance.archive import verify_archive, verify_archive_content
 from retention_governance.graph import EvidenceGraph
 from retention_governance.merge import CrossServiceReference, attach_references, merge_snapshots
 from retention_governance.planner import plan_retention
-from retention_governance.schema import EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
+from retention_governance.schema import ArchiveRecord, EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
 
 NOW = datetime(2026, 10, 25, tzinfo=timezone.utc)
 HORIZON = NOW + timedelta(days=365)
@@ -93,6 +93,15 @@ def test_conflicting_duplicate_objects_fail_merge():
         merge_snapshots([left, right], snapshot_id='conflict')
 
 
+def test_merge_recomputes_unknown_objects_after_deduplication():
+    shared = object_('shared', 'github', 'artifact', None)
+    left = replace(snapshot('left', [shared]), unknown_objects=1, collection_states=(('artifacts', 'complete'),))
+    right = replace(snapshot('right', [shared]), unknown_objects=1, collection_states=(('artifacts', 'complete'),))
+    merged = merge_snapshots([left, right], snapshot_id='merged')
+    assert merged.unknown_objects == 1
+    assert merged.collection_status == 'complete'
+
+
 def test_verified_archive_changes_expiring_plan_to_preserve():
     expiring = object_(
         'workflow', 'github_actions', 'workflow-log', 'sha256:workflow',
@@ -148,4 +157,33 @@ def test_archive_without_source_digest_cannot_be_verified():
         verified_at=NOW,
     )
     assert receipt.verified is False
+    assert updated.archive.status == 'unverified'
+
+
+@pytest.mark.parametrize(
+    'archive, expected',
+    [
+        (ArchiveRecord(status='verified', digest='sha256:anything', verified_at=NOW, accessible=True, archive_uri='s3://archive'), False),
+        (ArchiveRecord(status='verified', digest=None, verified_at=NOW, accessible=True, archive_uri='s3://archive'), False),
+        (ArchiveRecord(status='verified', digest='sha256:source', verified_at=NOW, accessible=True, archive_uri=None), False),
+        (ArchiveRecord(status='verified', digest='sha256:source', verified_at=NOW, accessible=False, archive_uri='s3://archive'), False),
+        (ArchiveRecord(status='verified', digest='sha256:source', verified_at=NOW, accessible=True, archive_uri='s3://archive'), True),
+    ],
+)
+def test_forged_archive_records_fail_closed(archive, expected):
+    obj = object_('artifact', 'github_actions', 'artifact', 'sha256:source')
+    forged = replace(obj, archive=archive)
+    assert forged.archive_verified() is expected
+
+
+def test_archive_verification_requires_uri():
+    obj = object_('artifact', 'github_actions', 'artifact', 'sha256:source')
+    updated, receipt = verify_archive(
+        obj,
+        archive_digest='sha256:source',
+        archive_uri=None,
+        verified_at=NOW,
+    )
+    assert receipt.verified is False
+    assert 'URI' in receipt.reason
     assert updated.archive.status == 'unverified'

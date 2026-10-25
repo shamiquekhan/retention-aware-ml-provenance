@@ -17,11 +17,13 @@ provider account has been accessed by the repository checks.
 It normalizes workflow runs, source commit references, workflow artifacts,
 check runs and commit statuses into the provider-neutral evidence graph. Artifact
 expiration uses the provider's per-artifact `expires_at` and `expired` fields.
-Workflow, check-run and status expiration is marked as `derived` when calculated
-from the current retention setting; the planner does not treat that estimate as
-observed historical retention. Artifact `expires_at` values remain observed
-provider fields. Collection state is recorded per endpoint as `complete`,
-`partial`, `failed` or `unknown`.
+Workflow, check-run and status expiration is left unknown because the current
+repository setting does not prove the historical policy effective when each
+object was created. The objects remain available for current reconstruction but
+cannot satisfy a future horizon without observed expiration or a verified
+archive. Artifact `expires_at` values remain observed provider fields.
+Collection state is recorded per endpoint as `complete`, `partial`, `failed`,
+`not_requested` or `unknown`.
 
 Optional collection is explicit:
 

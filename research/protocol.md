@@ -1,6 +1,6 @@
 # Research protocol: Evidence-Aware Retention Governance
 
-**Status:** Synthetic pilot, version 0.2 correctness milestone
+**Status:** Synthetic pilot, version 0.2.1 correctness milestone
 **Date:** 2026-10-25
 
 ## Research question
@@ -51,13 +51,14 @@ Unknown state is never interpreted as safe to delete.
 
 All metrics expose numerator and denominator. The pilot reports:
 
-1. current evidence-chain completeness;
-2. verified projected evidence-chain completeness after modeled actions;
-3. planned gap-resolution coverage, distinct from verified completeness;
-4. retention-gap incidence and earliest gap lead time;
-5. unsafe deletion proposal rate;
-6. retained bytes and byte-days above the minimum required closure;
-7. collection coverage, request success, unknown-object and known-size rates.
+1. current reconstruction completeness;
+2. horizon survival completeness;
+3. verified projected evidence-chain completeness after modeled actions;
+4. planned gap-resolution coverage, distinct from verified completeness;
+5. retention-gap incidence and earliest gap lead time;
+6. unsafe deletion proposal rate;
+7. source, verified-archive and proposed-archive byte-days;
+8. collection coverage, request success, unknown-object and known-size rates.
 
 A proposed `ARCHIVE` action counts toward gap-resolution coverage but does not
 count as verified projected completeness until the archive content has been

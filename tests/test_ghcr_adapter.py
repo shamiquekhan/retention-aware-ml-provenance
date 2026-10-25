@@ -90,6 +90,17 @@ def test_missing_child_flows_into_hold_for_review_plan():
     assert action_map['ghcr:acme/model:digest:sha256:missing'] == 'HOLD_FOR_REVIEW'
 
 
+def test_release_id_without_horizon_fails_closed():
+    try:
+        GHCRClient(transport=RegistryTransport({})).collect(
+            'acme', 'model', 'latest', release_id='release-oci'
+        )
+    except ValueError as error:
+        assert 'audit_horizon' in str(error)
+    else:
+        raise AssertionError('missing audit horizon must be rejected')
+
+
 class ChallengeTransport:
     def __init__(self):
         self.calls = []

@@ -310,7 +310,8 @@
               "status": "verified",
               "digest": "sha256:workflow3",
               "verified_at": "2026-10-20T00:00:00+00:00",
-              "accessible": true
+              "accessible": true,
+              "archive_uri": "s3://audit/workflow-archived.tar"
             }
           }
         ],

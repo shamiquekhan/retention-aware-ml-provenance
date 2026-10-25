@@ -22,6 +22,7 @@ def build_cases(seed: int, count: int) -> list[dict[str, object]]:
     variants = ("baseline", "partial_inventory", "missing_child", "unverified_archive")
     for index in range(count):
         snapshot = generate_inventory(seed, index=index)
+        case_seed = (seed * 1_000_003 + index * 97_409) & 0xFFFFFFFF
         variant = variants[index % len(variants)]
         if variant == "partial_inventory":
             snapshot = replace(
@@ -57,6 +58,7 @@ def build_cases(seed: int, count: int) -> list[dict[str, object]]:
             {
                 "case_id": f"expanded-{index:03d}-{variant}",
                 "description": f"Seeded v0.2 generated inventory variant: {variant}.",
+                "case_seed": case_seed,
                 "inventory": snapshot.as_dict(),
             }
         )
@@ -70,9 +72,11 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=ROOT / "scenarios" / "expanded.json")
     args = parser.parse_args()
     payload = {
-        "benchmark_version": "0.2",
+        "benchmark_version": "0.2.1",
         "description": "Expanded deterministic sensitivity benchmark with collection and archive failures.",
+        "generator_version": "0.2.1",
         "seed": args.seed,
+        "parameters": {"count": args.count, "variant_cycle": ["baseline", "partial_inventory", "missing_child", "unverified_archive"]},
         "cases": build_cases(args.seed, args.count),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -33,13 +33,19 @@ def main() -> int:
             ReleaseRequirement.from_dict(item)
             for item in json.loads(args.release_requirements.read_text())
         )
-    audit_horizon=parse_time(args.audit_horizon)
+    try:
+        audit_horizon=parse_time(args.audit_horizon)
+    except ValueError as error:
+        parser.error(str(error))
     token=os.environ.get(args.token_env)
-    collection=GitHubActionsClient(token=token, api_version=args.api_version).collect(
-        args.owner, args.repo, warning_days=args.warning_days, release_roots=release_roots,
-        audit_horizon=audit_horizon, release_requirements=release_requirements,
-        include_checks=args.include_checks, include_statuses=args.include_statuses
-    )
+    try:
+        collection=GitHubActionsClient(token=token, api_version=args.api_version).collect(
+            args.owner, args.repo, warning_days=args.warning_days, release_roots=release_roots,
+            audit_horizon=audit_horizon, release_requirements=release_requirements,
+            include_checks=args.include_checks, include_statuses=args.include_statuses
+        )
+    except ValueError as error:
+        parser.error(str(error))
     payload={
         'repository': collection.repository,
         'retention_settings': collection.retention_settings,

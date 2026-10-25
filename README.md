@@ -25,7 +25,7 @@ The current implementation contains:
 - a dependency graph with transitive required-evidence closure;
 - a deterministic dry-run planner with `PRESERVE`, `PRESERVE_DEPENDENCY`, `ARCHIVE`, `CANDIDATE_FOR_DELETION` and `HOLD_FOR_REVIEW` decisions;
 - a frozen synthetic benchmark with OCI parent/child relationships, expiring evidence, verified archives, unknown dependencies, protected objects and shared digests;
-- separate current-completeness, verified-projected-completeness, gap-resolution, unsafe-deletion, preservation-overhead and collection-coverage metrics;
+- separate current-reconstruction, horizon-survival, verified-projected-completeness, gap-resolution, unsafe-deletion, preservation-overhead and collection-coverage metrics;
 - workload-level aggregation across native, independent-TTL, conservative and dependency-aware strategies;
 - a normalized benchmark-manifest hash and deterministic seeded scenario generator for sensitivity checks.
 
@@ -47,7 +47,7 @@ python3 scripts/run_benchmark.py \
   --output reports/expanded_report.json
 ```
 
-The output is machine-readable and includes the benchmark-manifest hash, per-case inventory/planner hashes, baseline comparisons, aggregated strategy metrics and explicit metric denominators.
+The output is machine-readable and includes the benchmark-manifest hash, per-case inventory/planner hashes, baseline comparisons, aggregated strategy metrics and explicit metric denominators. Current reconstruction, horizon survival and verified projected completeness are reported separately; proposed archives affect remediation coverage but not verified preservation.
 
 ## Checks
 
@@ -56,7 +56,7 @@ python3 -m pytest -q
 python3 -m compileall -q src tests scripts
 ```
 
-The project intentionally uses Python's standard library for the first milestone. A mocked, read-only GitHub Actions adapter is now included as the first provider slice; it does not run during the synthetic benchmark and has no destructive operations. Provider collections now expose complete/partial/failed states, derived expiration timestamps are not treated as observed retention, and release requirements require explicit audit horizons.
+The project intentionally uses Python's standard library for the first milestone. A mocked, read-only GitHub Actions adapter is now included as the first provider slice; it does not run during the synthetic benchmark and has no destructive operations. Provider collections now expose complete/partial/failed/not-requested states, historical expiration is not inferred from today's repository setting, and release requirements require explicit audit horizons.
 
 ## GitHub Actions adapter
 
@@ -76,7 +76,7 @@ with `--include-checks --include-statuses`.
 
 Use `--release-requirements` with a JSON list containing `release_id`,
 `audit_horizon` and `required_object_ids`. The legacy `--release-roots` mapping
-requires `--audit-horizon` and otherwise produces no release requirement.
+requires `--audit-horizon`; omitting it is a hard error rather than an unconstrained inventory.
 
 For GHCR/OCI manifest dependencies:
 

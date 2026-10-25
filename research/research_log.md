@@ -17,7 +17,7 @@ Before adding read-only GitHub Actions or GHCR adapters, expand the synthetic ma
 ## 2026-10-25 — GitHub Actions adapter milestone
 
 - Added a read-only, pagination-aware GitHub Actions adapter for repository metadata, retention settings, workflow runs and artifacts.
-- Added mocked tests for authentication headers, per-artifact expiration, derived workflow retention, pagination and failed settings requests.
+- Added mocked tests for authentication headers, per-artifact expiration, unknown historical workflow retention, pagination and failed settings requests.
 - The adapter records request metadata and preserves unknown retention when settings or expiration data are unavailable.
 - Checks, commit statuses, organization inheritance and archive export remain outside this first provider slice.
 
@@ -46,3 +46,12 @@ Before adding read-only GitHub Actions or GHCR adapters, expand the synthetic ma
 - Added GHCR registry challenge/token negotiation, shared-digest edge preservation and unresolved descriptor dependencies.
 - Added archive-content hashing and regression coverage for missing source digests.
 - Added deterministic CI for tests, compilation, benchmark output and generated-report credential checks.
+
+## 2026-10-25 — v0.2.1 fail-closed evaluation milestone
+
+- Closed forged archive metadata paths: a verified archive now requires source and archive digests, an archive URI, accessibility and a verification timestamp.
+- Missing audit horizons now raise hard validation errors whenever release roots or a release ID are requested; provider CLIs return nonzero instead of producing unconstrained inventories.
+- Separated current reconstruction, horizon survival and verified projected completeness in benchmark metrics.
+- Reworked cost reporting into source, verified-archive, proposed-archive and uncertain byte-days; unknown sizes remain explicit lower-bound limitations.
+- Made generated cases use distinct derived seeds and varied chain, branch, shared-child, nested-index and multi-release topologies.
+- Recomputed merged unknown-object counts after object deduplication and synchronized `configs/experiment.json` with protocol version 0.2.1.

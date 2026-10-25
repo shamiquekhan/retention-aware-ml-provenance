@@ -139,7 +139,7 @@ def plan_retention(snapshot: InventorySnapshot, *, planner_version: str = "0.1.0
     release_horizons = {release.release_id: release.audit_horizon for release in snapshot.releases}
     actions: list[PlanAction] = []
     inventory_incomplete = snapshot.collection_status != "complete" or any(
-        status != "complete" for _, status in snapshot.collection_states
+        status not in {"complete", "not_requested"} for _, status in snapshot.collection_states
     )
 
     for object_id in sorted(required):

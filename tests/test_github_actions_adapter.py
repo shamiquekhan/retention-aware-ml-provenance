@@ -58,7 +58,8 @@ def test_read_only_adapter_normalizes_runs_artifacts_and_dependencies():
     )
     snapshot = collection.snapshot
     objects = snapshot.object_map()
-    assert objects['github:acme/demo:workflow-run:7'].expires_at.isoformat() == '2026-12-30T00:00:00+00:00'
+    assert objects['github:acme/demo:workflow-run:7'].expires_at is None
+    assert objects['github:acme/demo:workflow-run:7'].retention_status == 'available'
     assert objects['github:acme/demo:artifact:8'].retention_status == 'expiring'
     assert any(edge.prerequisite_id.endswith(':artifact:8') for edge in snapshot.edges) is False
     assert any(edge.dependent_id.endswith(':artifact:8') for edge in snapshot.edges)
@@ -67,7 +68,7 @@ def test_read_only_adapter_normalizes_runs_artifacts_and_dependencies():
     assert snapshot.collection_status == 'complete'
     assert snapshot.collection_state_map()['workflow_runs'] == 'complete'
     assert snapshot.releases[0].audit_horizon.isoformat() == '2027-10-25T00:00:00+00:00'
-    assert objects['github:acme/demo:workflow-run:7'].expiration_source == 'derived'
+    assert objects['github:acme/demo:workflow-run:7'].expiration_source == 'unknown'
     assert not objects['github:acme/demo:workflow-run:7'].survives_until(snapshot.releases[0].audit_horizon)
     assert any(call[1].get('Authorization') == 'Bearer secret-token' for call in transport.calls)
     assert all('secret-token' not in str(entry) for entry in collection.request_log)
@@ -87,6 +88,16 @@ def test_failed_settings_request_is_visible_and_retention_becomes_unknown():
     assert collection.snapshot.failed_requests == 1
     assert collection.snapshot.api_requests == 3
     assert collection.request_log[1]['error'] == 'http_error'
+
+
+def test_release_roots_without_horizon_fail_closed():
+    client = GitHubActionsClient(transport=FakeTransport({}))
+    try:
+        client.collect('acme', 'demo', release_roots={'release': ('root',)})
+    except ValueError as error:
+        assert 'audit_horizon' in str(error)
+    else:
+        raise AssertionError('missing audit horizon must be rejected')
 
 
 def test_pagination_continues_at_full_page_and_stops_on_short_page():

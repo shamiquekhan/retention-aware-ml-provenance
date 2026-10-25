@@ -5,7 +5,7 @@ from .planner import DecisionPlan, PlanAction, plan_retention
 from .generator import generate_inventory, generate_inventories
 from .providers.github_actions import GitHubActionsClient, GitHubActionsCollection
 from .providers.ghcr import GHCRClient, GHCRCollection
-from .archive import ArchiveVerification, verify_archive, verify_archive_content
+from .archive import ArchiveVerification, verify_archive, verify_archive_content, verify_archive_contents
 from .merge import CrossServiceReference, JoinResult, attach_references, merge_snapshots
 
 __all__ = [
@@ -28,5 +28,6 @@ __all__ = [
     "merge_snapshots",
     "verify_archive",
     "verify_archive_content",
+    "verify_archive_contents",
     "plan_retention",
 ]

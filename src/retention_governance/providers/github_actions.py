@@ -181,6 +181,8 @@ class GitHubActionsClient:
         if warning_days < 0:
             raise ValueError("warning_days must be non-negative")
         now = now or datetime.now(timezone.utc)
+        if release_roots and audit_horizon is None:
+            raise ValueError("audit_horizon is required when release_roots are supplied")
         repository = self._get_json(f"/repos/{owner}/{repo}") or {}
         retention = self._get_json(
             f"/repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention"
@@ -189,6 +191,7 @@ class GitHubActionsClient:
         warnings: list[str] = []
         if not isinstance(retention, dict) or not isinstance(retention_days, int):
             warnings.append("retention_settings_unavailable")
+        warnings.append("historical_expiration_unavailable_for_runs_checks_statuses")
         if not include_checks:
             warnings.append("check_runs_not_collected")
         if not include_statuses:
@@ -217,30 +220,24 @@ class GitHubActionsClient:
                 )
             return commit_id
 
-        def derived_expiry(created_at: datetime | None) -> datetime | None:
-            if created_at is None or not isinstance(retention_days, int):
-                return None
-            return created_at + timedelta(days=retention_days)
-
         for run in runs:
             run_id = run.get("id")
             if run_id is None:
                 continue
             run_object_id = self._object_id(owner, repo, "workflow-run", run_id)
             created_at = self._time(run.get("created_at"))
-            expires_at = derived_expiry(created_at)
             objects[run_object_id] = EvidenceObject(
                 object_id=run_object_id,
                 provider="github_actions",
                 object_type="workflow-run",
                 created_at=created_at,
-                expires_at=expires_at,
-                retention_status=self._status(expires_at, False, now, warning_days),
+                expires_at=None,
+                retention_status="available",
                 digest=None,
                 size_bytes=None,
                 source_uri=run.get("html_url") or run.get("url"),
                 policy_version=policy_version,
-                expiration_source="derived",
+                expiration_source="unknown",
             )
             head_sha = run.get("head_sha")
             if head_sha:
@@ -286,20 +283,19 @@ class GitHubActionsClient:
                     if check_id is None:
                         continue
                     created_at = self._time(check.get("started_at") or check.get("created_at"))
-                    expires_at = derived_expiry(created_at)
                     object_id = self._object_id(owner, repo, "check-run", check_id)
                     objects[object_id] = EvidenceObject(
                         object_id=object_id,
                         provider="github_actions",
                         object_type="check-run",
                         created_at=created_at,
-                        expires_at=expires_at,
-                        retention_status=self._status(expires_at, False, now, warning_days),
+                        expires_at=None,
+                        retention_status="available",
                         digest=None,
                         size_bytes=None,
                         source_uri=check.get("html_url") or check.get("url"),
                         policy_version=policy_version,
-                        expiration_source="derived",
+                        expiration_source="unknown",
                     )
                     edges.append(EvidenceEdge(object_id, commit_id, "references"))
             if include_statuses:
@@ -311,20 +307,19 @@ class GitHubActionsClient:
                     if status_id is None:
                         continue
                     created_at = self._time(status.get("created_at"))
-                    expires_at = derived_expiry(created_at)
                     object_id = self._object_id(owner, repo, "commit-status", status_id)
                     objects[object_id] = EvidenceObject(
                         object_id=object_id,
                         provider="github",
                         object_type="commit-status",
                         created_at=created_at,
-                        expires_at=expires_at,
-                        retention_status=self._status(expires_at, False, now, warning_days),
+                        expires_at=None,
+                        retention_status="available",
                         digest=None,
                         size_bytes=None,
                         source_uri=status.get("target_url"),
                         policy_version=policy_version,
-                        expiration_source="derived",
+                        expiration_source="unknown",
                     )
                     edges.append(EvidenceEdge(object_id, commit_id, "references"))
 
@@ -341,13 +336,10 @@ class GitHubActionsClient:
 
         releases = tuple(release_requirements)
         if release_roots:
-            if audit_horizon is None:
-                warnings.append("release_audit_horizon_required")
-            else:
-                releases += tuple(
-                    ReleaseRequirement(release_id, audit_horizon, tuple(root_ids))
-                    for release_id, root_ids in release_roots.items()
-                )
+            releases += tuple(
+                ReleaseRequirement(release_id, audit_horizon, tuple(root_ids))
+                for release_id, root_ids in release_roots.items()
+            )
 
         def endpoint_state(path: str, *, prefix: bool = False) -> CollectionStatus:
             entries = []
@@ -378,8 +370,12 @@ class GitHubActionsClient:
             )
         if include_checks:
             collection_states["check_runs"] = endpoint_state("/check-runs", prefix=True)
+        else:
+            collection_states["check_runs"] = "not_requested"
         if include_statuses:
             collection_states["commit_statuses"] = endpoint_state("/status", prefix=True)
+        else:
+            collection_states["commit_statuses"] = "not_requested"
         states = tuple(sorted(collection_states.items()))
         if any(status == "failed" for _, status in states):
             collection_status: CollectionStatus = "failed"

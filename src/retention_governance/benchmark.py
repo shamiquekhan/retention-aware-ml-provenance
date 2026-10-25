@@ -43,6 +43,8 @@ def aggregate_metrics(case_results: list[dict[str, Any]], strategy: str) -> dict
     metric_rows = [result["strategies"][strategy]["metrics"] for result in case_results]
     rate_keys = {
         "current_evidence_chain_completeness",
+        "current_reconstruction_completeness",
+        "horizon_survival_completeness",
         "planned_evidence_chain_completeness",
         "verified_projected_evidence_chain_completeness",
         "planned_resolution_coverage",

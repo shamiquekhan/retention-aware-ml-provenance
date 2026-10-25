@@ -162,6 +162,8 @@ class GHCRClient:
         fetch_children: bool = True,
     ) -> GHCRCollection:
         now = now or datetime.now(timezone.utc)
+        if release_id and audit_horizon is None:
+            raise ValueError("audit_horizon is required when release_id is supplied")
         package_path = quote(f"{owner}/{package}", safe="/")
         reference_path = quote(reference, safe="@:+")
         self._repository = f"{owner}/{package}"
@@ -262,10 +264,7 @@ class GHCRClient:
 
         releases = tuple(release_requirements)
         if release_id:
-            if audit_horizon is None:
-                warnings.append("release_audit_horizon_required")
-            else:
-                releases += (ReleaseRequirement(release_id, audit_horizon, (root_id,)),)
+            releases += (ReleaseRequirement(release_id, audit_horizon, (root_id,)),)
         child_failed = any(item in missing for item in objects if item.startswith("ghcr:"))
         collection_states: tuple[tuple[str, CollectionStatus], ...]
         if payload is None:

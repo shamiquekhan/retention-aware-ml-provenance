@@ -8,7 +8,7 @@ import hashlib
 import json
 from typing import Iterable
 
-from .schema import EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
+from .schema import CollectionStatus, EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
 
 
 @dataclass(frozen=True)
@@ -41,7 +41,8 @@ def merge_snapshots(
     release_map: dict[str, ReleaseRequirement] = {}
     policy_versions: set[str] = set()
     captured_at = snapshots[0].captured_at
-    api_requests = failed_requests = unknown_objects = 0
+    api_requests = failed_requests = 0
+    collection_states: dict[str, CollectionStatus] = {}
     for snapshot in snapshots:
         if snapshot.now != clock:
             raise ValueError("cross-service snapshots must share one frozen clock")
@@ -49,7 +50,10 @@ def merge_snapshots(
         policy_versions.add(snapshot.policy_version)
         api_requests += snapshot.api_requests
         failed_requests += snapshot.failed_requests
-        unknown_objects += snapshot.unknown_objects
+        for name, status in snapshot.collection_states:
+            collection_states[f"{snapshot.snapshot_id}:{name}"] = status
+        if not snapshot.collection_states and snapshot.collection_status != "complete":
+            collection_states[f"{snapshot.snapshot_id}:__snapshot__"] = snapshot.collection_status
         for obj in snapshot.objects:
             existing = objects.get(obj.object_id)
             if existing is not None and existing != obj:
@@ -70,6 +74,12 @@ def merge_snapshots(
         release_map[release.release_id] = release
     policy_payload = json.dumps(sorted(policy_versions), separators=(",", ":"))
     policy_version = f"cross-service:{hashlib.sha256(policy_payload.encode()).hexdigest()[:16]}"
+    if any(status == "failed" for status in collection_states.values()):
+        collection_status: CollectionStatus = "failed"
+    elif any(status in {"partial", "unknown"} for status in collection_states.values()):
+        collection_status = "partial"
+    else:
+        collection_status = "complete"
     return InventorySnapshot(
         snapshot_id=snapshot_id,
         captured_at=captured_at,
@@ -80,7 +90,9 @@ def merge_snapshots(
         releases=tuple(release_map[key] for key in sorted(release_map)),
         api_requests=api_requests,
         failed_requests=failed_requests,
-        unknown_objects=unknown_objects,
+        unknown_objects=sum(1 for obj in objects.values() if obj.retention_status == "unknown"),
+        collection_status=collection_status,
+        collection_states=tuple(sorted(collection_states.items())),
     )
 
 

@@ -29,6 +29,9 @@ def verify_archive(
     if not accessible:
         verified = False
         reason = "archive is not accessible for verification"
+    elif not archive_uri:
+        verified = False
+        reason = "archive URI is unavailable"
     elif obj.digest is None:
         verified = False
         reason = "source content digest is unavailable"
@@ -69,6 +72,24 @@ def verify_archive_content(
     return verify_archive(
         obj,
         archive_digest=archive_digest,
+        archive_uri=archive_uri,
+        verified_at=verified_at,
+        accessible=accessible,
+    )
+
+
+def verify_archive_contents(
+    obj: EvidenceObject,
+    *,
+    archive_content: bytes,
+    archive_uri: str | None,
+    verified_at: datetime,
+    accessible: bool = True,
+) -> tuple[EvidenceObject, ArchiveVerification]:
+    """Plural-name API for callers that verify a complete archive payload."""
+    return verify_archive_content(
+        obj,
+        archive_content=archive_content,
         archive_uri=archive_uri,
         verified_at=verified_at,
         accessible=accessible,

@@ -39,6 +39,7 @@ def test_generated_inventory_is_reproducible():
     assert inventory_hash(first) == inventory_hash(second)
     assert plan_retention(first).as_dict() == plan_retention(second).as_dict()
     assert inventory_hash(first) != inventory_hash(generate_inventory(18))
+    assert inventory_hash(first) != inventory_hash(generate_inventory(17, index=1))
 
 
 def test_naive_timestamps_are_rejected():

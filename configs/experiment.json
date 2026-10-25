@@ -1,5 +1,5 @@
 {
-  "version": "0.1",
+  "version": "0.2.1",
   "mode": "synthetic_read_only_dry_run",
   "clock": "scenario_manifest",
   "strategies": [
@@ -9,8 +9,10 @@
     "dependency_aware"
   ],
   "primary_metrics": [
-    "current_evidence_chain_completeness",
-    "planned_evidence_chain_completeness",
+    "current_reconstruction_completeness",
+    "horizon_survival_completeness",
+    "verified_projected_evidence_chain_completeness",
+    "planned_resolution_coverage",
     "retention_gap_incidence",
     "unsafe_deletion_proposal_rate"
   ],
@@ -20,11 +22,24 @@
   ],
   "operational_metrics": [
     "inventory_coverage",
+    "request_success_rate",
     "api_requests",
     "failed_requests",
-    "unknown_objects"
+    "unknown_objects",
+    "known_size_coverage",
+    "unknown_size_objects"
   ],
   "destructive_execution": false,
-  "provider_adapters": false,
-  "benchmark_manifest": "scenarios/pilot.json"
+  "provider_adapters": {
+    "github_actions": "read_only_optional",
+    "ghcr": "read_only_optional"
+  },
+  "benchmark_manifest": "scenarios/pilot.json",
+  "secondary_benchmark_manifest": "scenarios/expanded.json",
+  "expanded_benchmark_generator": {
+    "script": "scripts/generate_expanded_benchmark.py",
+    "seed": 2026,
+    "count": 16,
+    "generator_version": "0.2.1"
+  }
 }

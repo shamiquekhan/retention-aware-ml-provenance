@@ -31,6 +31,8 @@ def test_benchmark_report_contains_manifest_hash_and_aggregates():
     assert set(report['strategies']) == {'native', 'independent_ttl', 'conservative', 'dependency_aware'}
     aggregate = report['strategies']['dependency_aware']
     assert aggregate['current_evidence_chain_completeness']['denominator'] == 5
+    assert aggregate['current_reconstruction_completeness']['denominator'] == 5
+    assert aggregate['horizon_survival_completeness']['denominator'] == 5
     assert aggregate['unsafe_deletion_proposal_rate']['numerator'] == 0
 
 
@@ -63,6 +65,26 @@ def test_proposed_archive_is_resolution_coverage_not_verified_completeness():
     assert metrics.planned_complete_releases == 0
     assert metrics.resolved_gap_objects >= 1
     assert metrics.as_dict()['planned_resolution_coverage']['rate'] == 1.0
+
+
+def test_current_reconstruction_is_distinct_from_horizon_survival():
+    case = next(case for case in load_cases(ROOT / 'scenarios/pilot.json') if case['case_id'] == 'expiring_required_evidence')
+    snapshot = InventorySnapshot.from_dict(case['inventory'])
+    metrics = evaluate_plan(snapshot, plan_retention(snapshot))
+    assert metrics.current_complete_releases == 1
+    assert metrics.horizon_complete_releases == 0
+    report = metrics.as_dict()
+    assert report['current_reconstruction_completeness']['rate'] == 1.0
+    assert report['horizon_survival_completeness']['rate'] == 0.0
+
+
+def test_cost_report_separates_source_and_proposed_archive_byte_days():
+    case = next(case for case in load_cases(ROOT / 'scenarios/pilot.json') if case['case_id'] == 'expiring_required_evidence')
+    snapshot = InventorySnapshot.from_dict(case['inventory'])
+    report = evaluate_plan(snapshot, plan_retention(snapshot)).as_dict()
+    assert report['source_retention_byte_days'] > 0
+    assert report['proposed_archive_byte_days'] > 0
+    assert report['planned_retention_byte_days'] >= report['source_retention_byte_days']
 
 
 def test_baselines_use_shared_horizon_and_conservative_retains_all_objects():
