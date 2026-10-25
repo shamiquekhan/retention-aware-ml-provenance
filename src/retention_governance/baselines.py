@@ -13,11 +13,11 @@ def baseline_plan(snapshot: InventorySnapshot, strategy: str) -> DecisionPlan:
     objects = snapshot.object_map()
     graph = EvidenceGraph(snapshot)
     closures = graph.closures_for_releases()
-    explicit_required = {
-        object_id
-        for release in snapshot.releases
-        for object_id in release.required_object_ids
-    }
+    required = set().union(*(set(item.required_ids) for item in closures.values())) if closures else set()
+    workload_horizon = max(
+        (release.audit_horizon for release in snapshot.releases),
+        default=snapshot.now,
+    )
     actions: list[PlanAction] = []
     for object_id in sorted(objects):
         obj = objects[object_id]
@@ -26,15 +26,49 @@ def baseline_plan(snapshot: InventorySnapshot, strategy: str) -> DecisionPlan:
                 PlanAction("PRESERVE", object_id, "conservative baseline retains every inventoried object")
             )
             continue
-        required = object_id in (explicit_required if strategy == "independent_ttl" else set())
-        if required and obj.retention_status in {"available", "expiring"}:
-            actions.append(PlanAction("PRESERVE", object_id, "explicit release requirement under baseline", required=True))
-        elif obj.protected:
+        is_required = object_id in required
+        if obj.protected:
             actions.append(PlanAction("PRESERVE", object_id, "explicit policy protection"))
         elif obj.retention_status == "unknown" or obj.expires_at is None:
-            actions.append(PlanAction("HOLD_FOR_REVIEW", object_id, "baseline cannot verify deletion eligibility"))
+            actions.append(
+                PlanAction(
+                    "HOLD_FOR_REVIEW",
+                    object_id,
+                    "baseline cannot verify provider availability through the workload horizon",
+                    required=is_required,
+                )
+            )
+        elif (
+            obj.expires_at is not None
+            and obj.retention_status in {"available", "expiring"}
+            and (
+                (
+                    strategy == "native"
+                    and obj.expires_at > snapshot.now
+                )
+                or (
+                    strategy == "independent_ttl"
+                    and obj.expires_at >= workload_horizon
+                )
+            )
+        ):
+            actions.append(
+                PlanAction(
+                    "PRESERVE",
+                    object_id,
+                    f"{strategy} baseline follows object retention through the workload horizon",
+                    required=is_required,
+                )
+            )
         else:
-            actions.append(PlanAction("CANDIDATE_FOR_DELETION", object_id, "not explicitly retained by baseline"))
+            actions.append(
+                PlanAction(
+                    "CANDIDATE_FOR_DELETION",
+                    object_id,
+                    f"{strategy} baseline does not extend provider retention through the workload horizon",
+                    required=is_required,
+                )
+            )
     for missing in sorted(set().union(*(set(item.missing_ids) for item in closures.values()))):
         actions.append(PlanAction("HOLD_FOR_REVIEW", missing, "required dependency absent from inventory", required=True))
     return DecisionPlan(

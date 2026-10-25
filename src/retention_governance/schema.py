@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 RetentionStatus = Literal["available", "expiring", "expired", "unknown"]
 ArchiveStatus = Literal["none", "verified", "unverified", "inaccessible"]
+ExpirationSource = Literal["observed", "derived", "unknown"]
+CollectionStatus = Literal["complete", "partial", "failed", "unknown"]
 EdgeRelation = Literal[
     "generated_by",
     "references",
@@ -20,7 +22,10 @@ EdgeRelation = Literal[
 def parse_time(value: str | None) -> datetime | None:
     if value is None:
         return None
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise ValueError(f"timestamp must include a timezone: {value}")
+    return parsed.astimezone(timezone.utc)
 
 
 def format_time(value: datetime | None) -> str | None:
@@ -34,6 +39,12 @@ class ArchiveRecord:
     verified_at: datetime | None = None
     accessible: bool = False
     archive_uri: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.status not in {"none", "verified", "unverified", "inaccessible"}:
+            raise ValueError(f"invalid archive status: {self.status}")
+        if self.verified_at is not None and (self.verified_at.tzinfo is None or self.verified_at.utcoffset() is None):
+            raise ValueError("archive verification time must include a timezone")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any] | None) -> "ArchiveRecord":
@@ -70,6 +81,22 @@ class EvidenceObject:
     policy_version: str
     protected: bool = False
     archive: ArchiveRecord = field(default_factory=ArchiveRecord)
+    expiration_source: ExpirationSource = "observed"
+
+    def __post_init__(self) -> None:
+        if not self.object_id:
+            raise ValueError("evidence object ID must not be empty")
+        if self.retention_status not in {"available", "expiring", "expired", "unknown"}:
+            raise ValueError(f"invalid retention status: {self.retention_status}")
+        if self.expiration_source not in {"observed", "derived", "unknown"}:
+            raise ValueError(f"invalid expiration source: {self.expiration_source}")
+        if self.size_bytes is not None and self.size_bytes < 0:
+            raise ValueError(f"size_bytes must be non-negative: {self.object_id}")
+        if self.digest is not None and ":" not in self.digest:
+            raise ValueError(f"digest must include an algorithm prefix: {self.object_id}")
+        for label, value in (("created_at", self.created_at), ("expires_at", self.expires_at)):
+            if value is not None and (value.tzinfo is None or value.utcoffset() is None):
+                raise ValueError(f"{label} must include a timezone: {self.object_id}")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "EvidenceObject":
@@ -86,6 +113,7 @@ class EvidenceObject:
             policy_version=data["policy_version"],
             protected=bool(data.get("protected", False)),
             archive=ArchiveRecord.from_dict(data.get("archive")),
+            expiration_source=data.get("expiration_source", "observed"),
         )
 
     def archive_verified(self) -> bool:
@@ -98,6 +126,8 @@ class EvidenceObject:
     def survives_until(self, horizon: datetime) -> bool:
         """Conservatively require an explicit expiration boundary."""
         if self.retention_status not in {"available", "expiring"}:
+            return False
+        if self.expiration_source != "observed":
             return False
         if self.expires_at is None:
             return False
@@ -117,6 +147,7 @@ class EvidenceObject:
             "policy_version": self.policy_version,
             "protected": self.protected,
             "archive": self.archive.as_dict(),
+            "expiration_source": self.expiration_source,
         }
 
 
@@ -125,6 +156,12 @@ class EvidenceEdge:
     dependent_id: str
     prerequisite_id: str
     relation: EdgeRelation
+
+    def __post_init__(self) -> None:
+        if not self.dependent_id or not self.prerequisite_id:
+            raise ValueError("evidence edge endpoints must not be empty")
+        if self.relation not in {"generated_by", "references", "child_of", "evaluates", "required_for_audit"}:
+            raise ValueError(f"invalid evidence edge relation: {self.relation}")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "EvidenceEdge":
@@ -148,11 +185,22 @@ class ReleaseRequirement:
     audit_horizon: datetime
     required_object_ids: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        if not self.release_id:
+            raise ValueError("release ID must not be empty")
+        if self.audit_horizon.tzinfo is None or self.audit_horizon.utcoffset() is None:
+            raise ValueError("audit horizon must include a timezone")
+        if len(set(self.required_object_ids)) != len(self.required_object_ids):
+            raise ValueError(f"duplicate required object ID in release: {self.release_id}")
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ReleaseRequirement":
+        audit_horizon = parse_time(data.get("audit_horizon"))
+        if audit_horizon is None:
+            raise ValueError("release requirement needs an explicit audit horizon")
         return cls(
             release_id=data["release_id"],
-            audit_horizon=parse_time(data["audit_horizon"]),
+            audit_horizon=audit_horizon,
             required_object_ids=tuple(data["required_object_ids"]),
         )
 
@@ -176,9 +224,46 @@ class InventorySnapshot:
     api_requests: int = 0
     failed_requests: int = 0
     unknown_objects: int = 0
+    collection_status: CollectionStatus = "complete"
+    collection_states: tuple[tuple[str, CollectionStatus], ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.snapshot_id:
+            raise ValueError("snapshot ID must not be empty")
+        for label, value in (("captured_at", self.captured_at), ("now", self.now)):
+            if value.tzinfo is None or value.utcoffset() is None:
+                raise ValueError(f"{label} must include a timezone")
+        if self.api_requests < 0 or self.failed_requests < 0 or self.unknown_objects < 0:
+            raise ValueError("inventory counters must be non-negative")
+        if self.failed_requests > self.api_requests:
+            raise ValueError("failed_requests cannot exceed api_requests")
+        if self.collection_status not in {"complete", "partial", "failed", "unknown"}:
+            raise ValueError(f"invalid collection status: {self.collection_status}")
+        state_names: set[str] = set()
+        for name, status in self.collection_states:
+            if not name or name in state_names:
+                raise ValueError(f"duplicate or empty collection state: {name}")
+            if status not in {"complete", "partial", "failed", "unknown"}:
+                raise ValueError(f"invalid collection state: {status}")
+            state_names.add(name)
+        self.object_map()
+        seen_edges: set[tuple[str, str, str]] = set()
+        for edge in self.edges:
+            key = (edge.dependent_id, edge.prerequisite_id, edge.relation)
+            if key in seen_edges:
+                raise ValueError(f"duplicate evidence edge: {key}")
+            seen_edges.add(key)
+        release_ids = [release.release_id for release in self.releases]
+        if len(set(release_ids)) != len(release_ids):
+            raise ValueError("duplicate release requirement ID")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "InventorySnapshot":
+        raw_states = data.get("collection_states", {})
+        if isinstance(raw_states, dict):
+            collection_states = tuple(sorted((str(name), status) for name, status in raw_states.items()))
+        else:
+            collection_states = tuple((str(name), status) for name, status in raw_states)
         return cls(
             snapshot_id=data["snapshot_id"],
             captured_at=parse_time(data["captured_at"]),
@@ -190,6 +275,8 @@ class InventorySnapshot:
             api_requests=int(data.get("api_requests", 0)),
             failed_requests=int(data.get("failed_requests", 0)),
             unknown_objects=int(data.get("unknown_objects", 0)),
+            collection_status=data.get("collection_status", "complete"),
+            collection_states=collection_states,
         )
 
     def object_map(self) -> dict[str, EvidenceObject]:
@@ -199,6 +286,16 @@ class InventorySnapshot:
                 raise ValueError(f"duplicate evidence object ID: {obj.object_id}")
             result[obj.object_id] = obj
         return result
+
+    def collection_state_map(self) -> dict[str, CollectionStatus]:
+        return dict(self.collection_states)
+
+    def collection_coverage(self) -> tuple[int, int]:
+        """Return complete collection categories over expected categories."""
+        if not self.collection_states:
+            return (1, 1) if self.collection_status == "complete" else (0, 1)
+        complete = sum(status == "complete" for _, status in self.collection_states)
+        return complete, len(self.collection_states)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -212,4 +309,6 @@ class InventorySnapshot:
             "api_requests": self.api_requests,
             "failed_requests": self.failed_requests,
             "unknown_objects": self.unknown_objects,
+            "collection_status": self.collection_status,
+            "collection_states": {name: status for name, status in self.collection_states},
         }

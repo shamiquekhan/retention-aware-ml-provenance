@@ -35,3 +35,14 @@ Before adding read-only GitHub Actions or GHCR adapters, expand the synthetic ma
 - Added archive verification receipts with digest matching, accessibility and archive URI fields.
 - Verified that a valid archive changes an expiring required object from `ARCHIVE` to `PRESERVE_DEPENDENCY`, while mismatches remain unverified.
 - Added `scripts/merge_inventories.py` and cross-service documentation.
+
+## 2026-10-25 — v0.2 correctness hardening milestone
+
+- Separated current completeness, verified projected completeness and gap-resolution coverage. Required deletion candidates now fail projected completeness.
+- Reworked baselines to simulate provider expiration through the shared workload horizon instead of deleting every unprotected object.
+- Added timezone, enum, counter, duplicate-ID, duplicate-edge, digest and collection-state validation to the schema.
+- Added explicit `complete`, `partial`, `failed` and `unknown` collection states; incomplete inventories hold deletion decisions for review.
+- Added derived-versus-observed expiration provenance. Provider-derived GitHub expiration timestamps are not treated as verified historical retention.
+- Added GHCR registry challenge/token negotiation, shared-digest edge preservation and unresolved descriptor dependencies.
+- Added archive-content hashing and regression coverage for missing source digests.
+- Added deterministic CI for tests, compilation, benchmark output and generated-report credential checks.

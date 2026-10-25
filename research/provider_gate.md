@@ -17,8 +17,11 @@ provider account has been accessed by the repository checks.
 It normalizes workflow runs, source commit references, workflow artifacts,
 check runs and commit statuses into the provider-neutral evidence graph. Artifact
 expiration uses the provider's per-artifact `expires_at` and `expired` fields.
-Workflow, check-run and status expiration is derived only when retention settings
-are successfully observed; otherwise it remains unknown.
+Workflow, check-run and status expiration is marked as `derived` when calculated
+from the current retention setting; the planner does not treat that estimate as
+observed historical retention. Artifact `expires_at` values remain observed
+provider fields. Collection state is recorded per endpoint as `complete`,
+`partial`, `failed` or `unknown`.
 
 Optional collection is explicit:
 
@@ -26,6 +29,7 @@ Optional collection is explicit:
 python3 scripts/audit_github_actions.py \
   --owner OWNER \
   --repo REPO \
+  --release-requirements release-requirements.json \
   --include-checks \
   --include-statuses \
   --output reports/github_actions_inventory.json
@@ -40,14 +44,22 @@ is present. Parent-to-child `child_of` edges are preserved even when a child
 fetch fails, so the planner can emit `HOLD_FOR_REVIEW` instead of treating the
 child as safely retained.
 
+For private registries, a `401` `WWW-Authenticate` challenge is followed to the
+registry token service. The configured GitHub credential is used only for that
+scoped exchange; manifest requests use the returned short-lived bearer token.
+The client never puts credentials or exchanged tokens in its request log.
+
 ```bash
 python3 scripts/audit_ghcr.py \
   --owner OWNER \
   --package IMAGE_NAME \
   --reference TAG_OR_DIGEST \
-  --release-id RELEASE_ID \
+  --release-requirements release-requirements.json \
   --output reports/ghcr_inventory.json
 ```
+
+Every release requirement must include an explicit future or current
+`audit_horizon`; provider snapshot time is never substituted silently.
 
 GHCR retention metadata is not inferred from registry availability. OCI objects
 are marked with unknown retention unless a later provider-specific retention

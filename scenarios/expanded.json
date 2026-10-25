@@ -1,0 +1,1979 @@
+{
+  "benchmark_version": "0.2",
+  "cases": [
+    {
+      "case_id": "expanded-000-baseline",
+      "description": "Seeded v0.2 generated inventory variant: baseline.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-0",
+            "prerequisite_id": "generated-workflow-2026-0",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-0",
+            "prerequisite_id": "generated-index-2026-0",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-0",
+            "prerequisite_id": "generated-child-2026-0",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-0",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-0"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-0",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-0"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-0",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-0"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-0",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-0"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-0",
+            "required_object_ids": [
+              "generated-release-2026-0"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-0",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-001-partial_inventory",
+      "description": "Seeded v0.2 generated inventory variant: partial_inventory.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "complete",
+          "workflow_runs": "partial"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-1",
+            "prerequisite_id": "generated-workflow-2026-1",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-1",
+            "prerequisite_id": "generated-index-2026-1",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-1",
+            "prerequisite_id": "generated-child-2026-1",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-1",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-1"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-1",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-1"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-1",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-1"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-1",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-1"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-1",
+            "required_object_ids": [
+              "generated-release-2026-1"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-1",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-002-missing_child",
+      "description": "Seeded v0.2 generated inventory variant: missing_child.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "partial",
+          "workflow_runs": "complete"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-2",
+            "prerequisite_id": "generated-workflow-2026-2",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-2",
+            "prerequisite_id": "generated-index-2026-2",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-2",
+            "prerequisite_id": "generated-child-2026-2",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-2",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-2"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-2",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-2"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-2",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-2"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-2",
+            "required_object_ids": [
+              "generated-release-2026-2"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-2",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-003-unverified_archive",
+      "description": "Seeded v0.2 generated inventory variant: unverified_archive.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-3",
+            "prerequisite_id": "generated-workflow-2026-3",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-3",
+            "prerequisite_id": "generated-index-2026-3",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-3",
+            "prerequisite_id": "generated-child-2026-3",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-3",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-3"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-3",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-3"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-3",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-3"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": "sha256:wrong",
+              "status": "unverified",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-3",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-3"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-3",
+            "required_object_ids": [
+              "generated-release-2026-3"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-3",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-004-baseline",
+      "description": "Seeded v0.2 generated inventory variant: baseline.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-4",
+            "prerequisite_id": "generated-workflow-2026-4",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-4",
+            "prerequisite_id": "generated-index-2026-4",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-4",
+            "prerequisite_id": "generated-child-2026-4",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-4",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-4"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-4",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-4"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-4",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-4"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-4",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-4"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-4",
+            "required_object_ids": [
+              "generated-release-2026-4"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-4",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-005-partial_inventory",
+      "description": "Seeded v0.2 generated inventory variant: partial_inventory.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "complete",
+          "workflow_runs": "partial"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-5",
+            "prerequisite_id": "generated-workflow-2026-5",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-5",
+            "prerequisite_id": "generated-index-2026-5",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-5",
+            "prerequisite_id": "generated-child-2026-5",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-5",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-5"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-5",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-5"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-5",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-5"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-5",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-5"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-5",
+            "required_object_ids": [
+              "generated-release-2026-5"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-5",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-006-missing_child",
+      "description": "Seeded v0.2 generated inventory variant: missing_child.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "partial",
+          "workflow_runs": "complete"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-6",
+            "prerequisite_id": "generated-workflow-2026-6",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-6",
+            "prerequisite_id": "generated-index-2026-6",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-6",
+            "prerequisite_id": "generated-child-2026-6",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-6",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-6"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-6",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-6"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-6",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-6"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-6",
+            "required_object_ids": [
+              "generated-release-2026-6"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-6",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-007-unverified_archive",
+      "description": "Seeded v0.2 generated inventory variant: unverified_archive.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-7",
+            "prerequisite_id": "generated-workflow-2026-7",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-7",
+            "prerequisite_id": "generated-index-2026-7",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-7",
+            "prerequisite_id": "generated-child-2026-7",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-7",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-7"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-7",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-7"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-7",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-7"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": "sha256:wrong",
+              "status": "unverified",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-7",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-7"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-7",
+            "required_object_ids": [
+              "generated-release-2026-7"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-7",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-008-baseline",
+      "description": "Seeded v0.2 generated inventory variant: baseline.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-8",
+            "prerequisite_id": "generated-workflow-2026-8",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-8",
+            "prerequisite_id": "generated-index-2026-8",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-8",
+            "prerequisite_id": "generated-child-2026-8",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-8",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-8"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-8",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-8"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-8",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-8"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-8",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-8"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-8",
+            "required_object_ids": [
+              "generated-release-2026-8"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-8",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-009-partial_inventory",
+      "description": "Seeded v0.2 generated inventory variant: partial_inventory.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "complete",
+          "workflow_runs": "partial"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-9",
+            "prerequisite_id": "generated-workflow-2026-9",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-9",
+            "prerequisite_id": "generated-index-2026-9",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-9",
+            "prerequisite_id": "generated-child-2026-9",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-9",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-9"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-9",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-9"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-9",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-9"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-9",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-9"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-9",
+            "required_object_ids": [
+              "generated-release-2026-9"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-9",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-010-missing_child",
+      "description": "Seeded v0.2 generated inventory variant: missing_child.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "partial",
+          "workflow_runs": "complete"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-10",
+            "prerequisite_id": "generated-workflow-2026-10",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-10",
+            "prerequisite_id": "generated-index-2026-10",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-10",
+            "prerequisite_id": "generated-child-2026-10",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-10",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-10"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-10",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-10"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-10",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-10"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-10",
+            "required_object_ids": [
+              "generated-release-2026-10"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-10",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-011-unverified_archive",
+      "description": "Seeded v0.2 generated inventory variant: unverified_archive.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-11",
+            "prerequisite_id": "generated-workflow-2026-11",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-11",
+            "prerequisite_id": "generated-index-2026-11",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-11",
+            "prerequisite_id": "generated-child-2026-11",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-11",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-11"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-11",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-11"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-11",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-11"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": "sha256:wrong",
+              "status": "unverified",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-11",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-11"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-11",
+            "required_object_ids": [
+              "generated-release-2026-11"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-11",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-012-baseline",
+      "description": "Seeded v0.2 generated inventory variant: baseline.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-12",
+            "prerequisite_id": "generated-workflow-2026-12",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-12",
+            "prerequisite_id": "generated-index-2026-12",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-12",
+            "prerequisite_id": "generated-child-2026-12",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-12",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-12"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-12",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-12"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-12",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-12"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-12",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-12"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-12",
+            "required_object_ids": [
+              "generated-release-2026-12"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-12",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-013-partial_inventory",
+      "description": "Seeded v0.2 generated inventory variant: partial_inventory.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "complete",
+          "workflow_runs": "partial"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-13",
+            "prerequisite_id": "generated-workflow-2026-13",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-13",
+            "prerequisite_id": "generated-index-2026-13",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-13",
+            "prerequisite_id": "generated-child-2026-13",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-13",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-13"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-13",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-13"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-13",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-13"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-13",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-13"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-13",
+            "required_object_ids": [
+              "generated-release-2026-13"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-13",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-014-missing_child",
+      "description": "Seeded v0.2 generated inventory variant: missing_child.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {
+          "oci_manifests": "partial",
+          "workflow_runs": "complete"
+        },
+        "collection_status": "partial",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-14",
+            "prerequisite_id": "generated-workflow-2026-14",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-14",
+            "prerequisite_id": "generated-index-2026-14",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-14",
+            "prerequisite_id": "generated-child-2026-14",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-14",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-14"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-14",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-14"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-14",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-14"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-14",
+            "required_object_ids": [
+              "generated-release-2026-14"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-14",
+        "unknown_objects": 0
+      }
+    },
+    {
+      "case_id": "expanded-015-unverified_archive",
+      "description": "Seeded v0.2 generated inventory variant: unverified_archive.",
+      "inventory": {
+        "api_requests": 8,
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "collection_states": {},
+        "collection_status": "complete",
+        "edges": [
+          {
+            "dependent_id": "generated-release-2026-15",
+            "prerequisite_id": "generated-workflow-2026-15",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "generated-release-2026-15",
+            "prerequisite_id": "generated-index-2026-15",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "generated-index-2026-15",
+            "prerequisite_id": "generated-child-2026-15",
+            "relation": "child_of"
+          }
+        ],
+        "failed_requests": 0,
+        "now": "2026-10-25T00:00:00+00:00",
+        "objects": [
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:release",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-release-2026-15",
+            "object_type": "release-record",
+            "policy_version": "generated-0.1",
+            "protected": true,
+            "provider": "github",
+            "retention_status": "available",
+            "size_bytes": 10,
+            "source_uri": "github://generated-release-2026-15"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:workflow",
+            "expiration_source": "observed",
+            "expires_at": "2026-11-24T00:00:00+00:00",
+            "object_id": "generated-workflow-2026-15",
+            "object_type": "workflow-run",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "github_actions",
+            "retention_status": "expiring",
+            "size_bytes": 100,
+            "source_uri": "github_actions://generated-workflow-2026-15"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": null,
+              "status": "none",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:index",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-index-2026-15",
+            "object_type": "oci-index",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 50,
+            "source_uri": "ghcr://generated-index-2026-15"
+          },
+          {
+            "archive": {
+              "accessible": false,
+              "archive_uri": null,
+              "digest": "sha256:wrong",
+              "status": "unverified",
+              "verified_at": null
+            },
+            "created_at": "2026-10-25T00:00:00+00:00",
+            "digest": "sha256:child",
+            "expiration_source": "observed",
+            "expires_at": "2028-03-08T00:00:00+00:00",
+            "object_id": "generated-child-2026-15",
+            "object_type": "oci-manifest",
+            "policy_version": "generated-0.1",
+            "protected": false,
+            "provider": "ghcr",
+            "retention_status": "available",
+            "size_bytes": 75,
+            "source_uri": "ghcr://generated-child-2026-15"
+          }
+        ],
+        "policy_version": "generated-0.1",
+        "releases": [
+          {
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "release_id": "generated-release-2026-15",
+            "required_object_ids": [
+              "generated-release-2026-15"
+            ]
+          }
+        ],
+        "snapshot_id": "generated-snapshot-2026-15",
+        "unknown_objects": 0
+      }
+    }
+  ],
+  "description": "Expanded deterministic sensitivity benchmark with collection and archive failures.",
+  "seed": 2026
+}

@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from retention_governance.providers.github_actions import GitHubActionsClient
+from retention_governance.schema import ReleaseRequirement, parse_time
 
 
 def main() -> int:
@@ -17,6 +18,8 @@ def main() -> int:
     parser.add_argument('--api-version', default='2026-03-10')
     parser.add_argument('--warning-days', type=int, default=30)
     parser.add_argument('--release-roots', type=Path, help='JSON mapping release IDs to root object IDs.')
+    parser.add_argument('--release-requirements', type=Path, help='JSON list with release_id, audit_horizon and required_object_ids.')
+    parser.add_argument('--audit-horizon', help='Explicit horizon used with the legacy --release-roots mapping.')
     parser.add_argument('--include-checks', action='store_true')
     parser.add_argument('--include-statuses', action='store_true')
     args=parser.parse_args()
@@ -24,9 +27,17 @@ def main() -> int:
     if args.release_roots:
         release_roots=json.loads(args.release_roots.read_text())
         release_roots={key: tuple(value) for key, value in release_roots.items()}
+    release_requirements=()
+    if args.release_requirements:
+        release_requirements=tuple(
+            ReleaseRequirement.from_dict(item)
+            for item in json.loads(args.release_requirements.read_text())
+        )
+    audit_horizon=parse_time(args.audit_horizon)
     token=os.environ.get(args.token_env)
     collection=GitHubActionsClient(token=token, api_version=args.api_version).collect(
         args.owner, args.repo, warning_days=args.warning_days, release_roots=release_roots,
+        audit_horizon=audit_horizon, release_requirements=release_requirements,
         include_checks=args.include_checks, include_statuses=args.include_statuses
     )
     payload={

@@ -54,6 +54,7 @@ def test_read_only_adapter_normalizes_runs_artifacts_and_dependencies():
         now=datetime(2026, 10, 25, tzinfo=timezone.utc),
         warning_days=45,
         release_roots={'release-7': ('github:acme/demo:workflow-run:7',)},
+        audit_horizon=datetime(2027, 10, 25, tzinfo=timezone.utc),
     )
     snapshot = collection.snapshot
     objects = snapshot.object_map()
@@ -63,6 +64,11 @@ def test_read_only_adapter_normalizes_runs_artifacts_and_dependencies():
     assert any(edge.dependent_id.endswith(':artifact:8') for edge in snapshot.edges)
     assert snapshot.api_requests == 4
     assert snapshot.failed_requests == 0
+    assert snapshot.collection_status == 'complete'
+    assert snapshot.collection_state_map()['workflow_runs'] == 'complete'
+    assert snapshot.releases[0].audit_horizon.isoformat() == '2027-10-25T00:00:00+00:00'
+    assert objects['github:acme/demo:workflow-run:7'].expiration_source == 'derived'
+    assert not objects['github:acme/demo:workflow-run:7'].survives_until(snapshot.releases[0].audit_horizon)
     assert any(call[1].get('Authorization') == 'Bearer secret-token' for call in transport.calls)
     assert all('secret-token' not in str(entry) for entry in collection.request_log)
 
@@ -96,6 +102,26 @@ def test_pagination_continues_at_full_page_and_stops_on_short_page():
     run_calls = [call for call in transport.calls if '/actions/runs?' in call[0]]
     assert len(run_calls) == 2
     assert len([obj for obj in collection.snapshot.objects if obj.object_type == 'workflow-run']) == 101
+
+
+def test_failed_second_page_marks_workflow_collection_partial():
+    first_page = [{'id': index, 'created_at': '2026-10-01T00:00:00Z'} for index in range(100)]
+    responses = {
+        ('/repos/acme/demo', None): response({}),
+        ('/repos/acme/demo/actions/permissions/artifact-and-log-retention', None): response({'days': 90}),
+        ('/repos/acme/demo/actions/runs', 1): response({'workflow_runs': first_page}),
+        ('/repos/acme/demo/actions/runs', 2): response({}, status=500),
+    }
+    class PaginationTransport(FakeTransport):
+        def get(self, url, headers):
+            if '/actions/runs/' in url and '/artifacts?' in url:
+                return response({'artifacts': []})
+            return super().get(url, headers)
+
+    collection = GitHubActionsClient(transport=PaginationTransport(responses)).collect('acme', 'demo')
+    assert collection.snapshot.collection_state_map()['workflow_runs'] == 'partial'
+    assert collection.snapshot.collection_status == 'partial'
+    assert collection.snapshot.failed_requests == 1
 
 
 def test_optional_check_runs_and_commit_statuses_are_normalized():

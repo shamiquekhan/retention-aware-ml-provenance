@@ -1,9 +1,10 @@
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
+import hashlib
 
 import pytest
 
-from retention_governance.archive import verify_archive
+from retention_governance.archive import verify_archive, verify_archive_content
 from retention_governance.graph import EvidenceGraph
 from retention_governance.merge import CrossServiceReference, attach_references, merge_snapshots
 from retention_governance.planner import plan_retention
@@ -123,3 +124,28 @@ def test_archive_digest_mismatch_remains_unverified():
     assert receipt.verified is False
     assert updated.archive.status == 'unverified'
     assert 'does not match' in receipt.reason
+
+
+def test_archive_content_is_hashed_before_verification():
+    content = b'archive payload'
+    obj = object_('artifact', 'github_actions', 'artifact', f'sha256:{hashlib.sha256(content).hexdigest()}')
+    updated, receipt = verify_archive_content(
+        obj,
+        archive_content=content,
+        archive_uri='s3://audit/artifact',
+        verified_at=NOW,
+    )
+    assert receipt.verified is True
+    assert updated.archive.status == 'verified'
+
+
+def test_archive_without_source_digest_cannot_be_verified():
+    obj = object_('artifact', 'github_actions', 'artifact', None)
+    updated, receipt = verify_archive(
+        obj,
+        archive_digest='sha256:anything',
+        archive_uri='s3://audit/artifact',
+        verified_at=NOW,
+    )
+    assert receipt.verified is False
+    assert updated.archive.status == 'unverified'

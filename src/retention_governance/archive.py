@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from datetime import datetime
+import hashlib
 
 from .schema import ArchiveRecord, EvidenceObject
 
@@ -46,3 +47,29 @@ def verify_archive(
     )
     updated = replace(obj, archive=record)
     return updated, ArchiveVerification(obj.object_id, verified, reason, record)
+
+
+def verify_archive_content(
+    obj: EvidenceObject,
+    *,
+    archive_content: bytes,
+    archive_uri: str | None,
+    verified_at: datetime,
+    accessible: bool = True,
+) -> tuple[EvidenceObject, ArchiveVerification]:
+    """Hash archive content before creating a verification receipt."""
+    if obj.digest is None:
+        archive_digest = None
+    else:
+        algorithm, _, _ = obj.digest.partition(":")
+        if algorithm != "sha256":
+            archive_digest = f"{algorithm}:unsupported"
+        else:
+            archive_digest = f"sha256:{hashlib.sha256(archive_content).hexdigest()}"
+    return verify_archive(
+        obj,
+        archive_digest=archive_digest,
+        archive_uri=archive_uri,
+        verified_at=verified_at,
+        accessible=accessible,
+    )

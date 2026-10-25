@@ -22,7 +22,7 @@ def test_duplicate_object_ids_fail():
     snapshot=dict(case['inventory'])
     snapshot['objects']=snapshot['objects']+[snapshot['objects'][0]]
     with pytest.raises(ValueError, match='duplicate evidence object ID'):
-        InventorySnapshot.from_dict(snapshot).object_map()
+        InventorySnapshot.from_dict(snapshot)
 
 
 def test_missing_dependency_is_explicit():
@@ -39,3 +39,20 @@ def test_generated_inventory_is_reproducible():
     assert inventory_hash(first) == inventory_hash(second)
     assert plan_retention(first).as_dict() == plan_retention(second).as_dict()
     assert inventory_hash(first) != inventory_hash(generate_inventory(18))
+
+
+def test_naive_timestamps_are_rejected():
+    case = load_cases(ROOT / 'scenarios/pilot.json')[0]
+    snapshot = dict(case['inventory'])
+    snapshot['now'] = '2026-10-25T00:00:00'
+    with pytest.raises(ValueError, match='timezone'):
+        InventorySnapshot.from_dict(snapshot)
+
+
+def test_partial_collection_is_explicit_in_snapshot():
+    case = load_cases(ROOT / 'scenarios/pilot.json')[0]
+    snapshot = dict(case['inventory'])
+    snapshot['collection_status'] = 'partial'
+    snapshot['collection_states'] = {'workflow_runs': 'partial', 'artifacts': 'complete'}
+    parsed = InventorySnapshot.from_dict(snapshot)
+    assert parsed.collection_coverage() == (1, 2)

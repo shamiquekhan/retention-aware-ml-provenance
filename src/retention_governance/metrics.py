@@ -17,6 +17,9 @@ class BenchmarkMetrics:
     required_objects: int
     current_complete_releases: int
     planned_complete_releases: int
+    planned_resolution_releases: int
+    gap_objects: int
+    resolved_gap_objects: int
     retention_gap_releases: int
     unsafe_deletion_proposals: int
     deletion_decisions: int
@@ -30,6 +33,10 @@ class BenchmarkMetrics:
     api_requests: int
     failed_requests: int
     unknown_objects: int
+    known_size_objects: int
+    sized_objects: int
+    _collection_complete: int
+    _collection_categories: int
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -37,6 +44,11 @@ class BenchmarkMetrics:
             "required_objects": self.required_objects,
             "current_evidence_chain_completeness": _rate(self.current_complete_releases, self.releases),
             "planned_evidence_chain_completeness": _rate(self.planned_complete_releases, self.releases),
+            "verified_projected_evidence_chain_completeness": _rate(
+                self.planned_complete_releases, self.releases
+            ),
+            "planned_resolution_coverage": _rate(self.planned_resolution_releases, self.releases),
+            "gap_resolution_coverage": _rate(self.resolved_gap_objects, self.gap_objects),
             "retention_gap_incidence": _rate(self.retention_gap_releases, self.releases),
             "unsafe_deletion_proposal_rate": _rate(self.unsafe_deletion_proposals, self.deletion_decisions),
             "retained_bytes": self.retained_bytes,
@@ -49,8 +61,18 @@ class BenchmarkMetrics:
             "api_requests": self.api_requests,
             "failed_requests": self.failed_requests,
             "unknown_objects": self.unknown_objects,
-            "inventory_coverage": _rate(self.api_requests - self.failed_requests, self.api_requests),
+            "request_success_rate": _rate(self.api_requests - self.failed_requests, self.api_requests),
+            "inventory_coverage": _rate(self.collection_complete, self.collection_categories),
+            "known_size_coverage": _rate(self.known_size_objects, self.sized_objects),
         }
+
+    @property
+    def collection_complete(self) -> int:
+        return self._collection_complete
+
+    @property
+    def collection_categories(self) -> int:
+        return self._collection_categories
 
 
 def _rate(numerator: int, denominator: int) -> dict[str, Any]:
@@ -68,10 +90,16 @@ def evaluate_plan(snapshot: InventorySnapshot, plan: DecisionPlan) -> BenchmarkM
     action_map = {action.object_id: action for action in plan.actions}
     current_complete = 0
     planned_complete = 0
+    planned_resolution_releases = 0
+    gap_objects: set[str] = set()
+    resolved_gap_objects: set[str] = set()
     gap_releases = 0
     gap_leads: list[int] = []
     required_objects: set[str] = set()
     required_horizons: dict[str, datetime] = {}
+    inventory_complete = snapshot.collection_status == "complete" and all(
+        status == "complete" for _, status in snapshot.collection_states
+    )
 
     for release in snapshot.releases:
         closure = closures[release.release_id]
@@ -81,9 +109,10 @@ def evaluate_plan(snapshot: InventorySnapshot, plan: DecisionPlan) -> BenchmarkM
                 required_horizons.get(object_id, release.audit_horizon),
                 release.audit_horizon,
             )
-        complete_now = not closure.missing_ids
-        complete_planned = not closure.missing_ids
-        release_has_gap = bool(closure.missing_ids)
+        complete_now = inventory_complete and not closure.missing_ids
+        complete_planned = inventory_complete and not closure.missing_ids
+        release_has_gap = bool(closure.missing_ids) or not inventory_complete
+        release_gaps: set[str] = set(closure.missing_ids)
         for object_id in closure.required_ids:
             obj = objects.get(object_id)
             if obj is None:
@@ -94,13 +123,35 @@ def evaluate_plan(snapshot: InventorySnapshot, plan: DecisionPlan) -> BenchmarkM
             if not obj.archive_verified() and not obj.survives_until(release.audit_horizon):
                 complete_now = False
                 release_has_gap = True
+                release_gaps.add(object_id)
                 if obj.expires_at is None:
                     gap_leads.append(0)
                 else:
                     gap_leads.append((obj.expires_at - snapshot.now).days)
             action = action_map.get(object_id)
-            if action is None or action.action in {"ARCHIVE", "HOLD_FOR_REVIEW"}:
+            if action is None or action.action in {
+                "ARCHIVE",
+                "HOLD_FOR_REVIEW",
+                "CANDIDATE_FOR_DELETION",
+            }:
                 complete_planned = False
+            elif not obj.archive_verified() and not obj.survives_until(release.audit_horizon):
+                complete_planned = False
+        gap_objects.update(release_gaps)
+        resolved_gap_objects.update(
+            object_id
+            for object_id in release_gaps
+            if action_map.get(object_id) is not None
+            and action_map[object_id].action == "ARCHIVE"
+        )
+        if release_gaps and all(
+            action_map.get(object_id) is not None
+            and action_map[object_id].action == "ARCHIVE"
+            for object_id in release_gaps
+        ):
+            planned_resolution_releases += 1
+        elif not release_gaps and complete_now:
+            planned_resolution_releases += 1
         current_complete += int(complete_now)
         planned_complete += int(complete_planned)
         gap_releases += int(release_has_gap)
@@ -147,6 +198,9 @@ def evaluate_plan(snapshot: InventorySnapshot, plan: DecisionPlan) -> BenchmarkM
         required_objects=len(required_objects),
         current_complete_releases=current_complete,
         planned_complete_releases=planned_complete,
+        planned_resolution_releases=planned_resolution_releases,
+        gap_objects=len(gap_objects),
+        resolved_gap_objects=len(resolved_gap_objects),
         retention_gap_releases=gap_releases,
         unsafe_deletion_proposals=len(unsafe),
         deletion_decisions=len(deletion_decisions),
@@ -162,4 +216,8 @@ def evaluate_plan(snapshot: InventorySnapshot, plan: DecisionPlan) -> BenchmarkM
         api_requests=snapshot.api_requests,
         failed_requests=snapshot.failed_requests,
         unknown_objects=snapshot.unknown_objects,
+        known_size_objects=sum(1 for obj in objects.values() if obj.size_bytes is not None),
+        sized_objects=len(objects),
+        _collection_complete=snapshot.collection_coverage()[0],
+        _collection_categories=snapshot.collection_coverage()[1],
     )

@@ -138,6 +138,9 @@ def plan_retention(snapshot: InventorySnapshot, *, planner_version: str = "0.1.0
     required, root_objects, release_ids_by_object, missing = _required_context(snapshot)
     release_horizons = {release.release_id: release.audit_horizon for release in snapshot.releases}
     actions: list[PlanAction] = []
+    inventory_incomplete = snapshot.collection_status != "complete" or any(
+        status != "complete" for _, status in snapshot.collection_states
+    )
 
     for object_id in sorted(required):
         obj = objects.get(object_id)
@@ -147,6 +150,17 @@ def plan_retention(snapshot: InventorySnapshot, *, planner_version: str = "0.1.0
         horizons = [release_horizons[release_id] for release_id in release_ids]
         horizon = max(horizons)
         dependency = object_id not in root_objects
+        if inventory_incomplete:
+            actions.append(
+                PlanAction(
+                    action="HOLD_FOR_REVIEW",
+                    object_id=object_id,
+                    reason="required evidence comes from an incomplete provider inventory",
+                    release_ids=tuple(sorted(release_ids)),
+                    required=True,
+                )
+            )
+            continue
         actions.append(
             _action_for_required(
                 obj,
@@ -158,7 +172,15 @@ def plan_retention(snapshot: InventorySnapshot, *, planner_version: str = "0.1.0
 
     for object_id in sorted(set(objects) - required):
         obj = objects[object_id]
-        if obj.protected:
+        if inventory_incomplete:
+            actions.append(
+                PlanAction(
+                    action="HOLD_FOR_REVIEW",
+                    object_id=object_id,
+                    reason="deletion eligibility is blocked by an incomplete provider inventory",
+                )
+            )
+        elif obj.protected:
             actions.append(
                 PlanAction(
                     action="PRESERVE",

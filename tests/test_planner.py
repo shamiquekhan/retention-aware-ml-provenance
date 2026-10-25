@@ -70,6 +70,14 @@ def test_planning_is_deterministic_for_same_snapshot():
     assert first == second
 
 
+def test_incomplete_inventory_holds_nonrequired_objects_for_review():
+    case = load_cases(ROOT / 'scenarios/pilot.json')[0]
+    snapshot = InventorySnapshot.from_dict(case['inventory'])
+    partial = replace(snapshot, collection_status='partial', collection_states=(('workflow_runs', 'partial'),))
+    action_map = {action.object_id: action for action in plan_retention(partial).actions}
+    assert action_map['unused-build'].action == 'HOLD_FOR_REVIEW'
+
+
 def test_longer_horizon_cannot_improve_required_retention_action():
     case = next(case for case in load_cases(ROOT/'scenarios/pilot.json') if case['case_id'] == 'complete_multiarch')
     snapshot = InventorySnapshot.from_dict(case['inventory'])

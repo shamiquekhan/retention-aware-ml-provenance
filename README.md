@@ -25,7 +25,7 @@ The current implementation contains:
 - a dependency graph with transitive required-evidence closure;
 - a deterministic dry-run planner with `PRESERVE`, `PRESERVE_DEPENDENCY`, `ARCHIVE`, `CANDIDATE_FOR_DELETION` and `HOLD_FOR_REVIEW` decisions;
 - a frozen synthetic benchmark with OCI parent/child relationships, expiring evidence, verified archives, unknown dependencies, protected objects and shared digests;
-- explicit completeness, retention-gap, unsafe-deletion, preservation-overhead and operational-coverage metrics;
+- separate current-completeness, verified-projected-completeness, gap-resolution, unsafe-deletion, preservation-overhead and collection-coverage metrics;
 - workload-level aggregation across native, independent-TTL, conservative and dependency-aware strategies;
 - a normalized benchmark-manifest hash and deterministic seeded scenario generator for sensitivity checks.
 
@@ -37,6 +37,16 @@ python3 scripts/run_benchmark.py \
   --output reports/pilot_report.json
 ```
 
+The expanded v0.2 benchmark is frozen in `scenarios/expanded.json` and can be
+regenerated deterministically with:
+
+```bash
+python3 scripts/generate_expanded_benchmark.py --seed 2026 --count 16
+python3 scripts/run_benchmark.py \
+  --scenarios scenarios/expanded.json \
+  --output reports/expanded_report.json
+```
+
 The output is machine-readable and includes the benchmark-manifest hash, per-case inventory/planner hashes, baseline comparisons, aggregated strategy metrics and explicit metric denominators.
 
 ## Checks
@@ -46,7 +56,7 @@ python3 -m pytest -q
 python3 -m compileall -q src tests scripts
 ```
 
-The project intentionally uses Python's standard library for the first milestone. A mocked, read-only GitHub Actions adapter is now included as the first provider slice; it does not run during the synthetic benchmark and has no destructive operations. GHCR manifest retrieval, checks/status normalization, Langfuse, notebooks, archive upload and deletion execution remain later phases and require separate authorization and dependency decisions.
+The project intentionally uses Python's standard library for the first milestone. A mocked, read-only GitHub Actions adapter is now included as the first provider slice; it does not run during the synthetic benchmark and has no destructive operations. Provider collections now expose complete/partial/failed states, derived expiration timestamps are not treated as observed retention, and release requirements require explicit audit horizons.
 
 ## GitHub Actions adapter
 
@@ -64,6 +74,10 @@ available, it emits warnings and preserves unknown state rather than assuming
 indefinite retention. Check runs and commit statuses can be enabled explicitly
 with `--include-checks --include-statuses`.
 
+Use `--release-requirements` with a JSON list containing `release_id`,
+`audit_horizon` and `required_object_ids`. The legacy `--release-roots` mapping
+requires `--audit-horizon` and otherwise produces no release requirement.
+
 For GHCR/OCI manifest dependencies:
 
 ```bash
@@ -75,8 +89,15 @@ python3 scripts/audit_ghcr.py \
 ```
 
 The GHCR adapter preserves parent-index/child-manifest edges and holds missing
-child digests for review. It does not yet fetch image layers/config blobs or
-infer registry retention.
+child digests for review. It negotiates scoped registry bearer tokens after a
+registry challenge, preserves shared-digest edges for every parent, and treats
+unknown retention metadata as unresolved. It does not yet fetch image
+layers/config blobs or infer registry retention.
+
+Archive verification for synthetic fixtures is available through
+`verify_archive_content`, which hashes supplied archive bytes before comparing
+them with the source digest. A missing source digest or inaccessible archive
+cannot produce a verified archive.
 
 ## Safety and governance constraints
 

@@ -17,7 +17,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from ..schema import EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
+from ..schema import CollectionStatus, EvidenceEdge, EvidenceObject, InventorySnapshot, ReleaseRequirement
 
 
 @dataclass(frozen=True)
@@ -85,7 +85,7 @@ class GitHubActionsClient:
         headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": self.api_version,
-            "User-Agent": "retention-aware-ml-provenance/0.1",
+            "User-Agent": "retention-aware-ml-provenance/0.2",
         }
         if self._auth_header:
             headers["Authorization"] = self._auth_header
@@ -172,6 +172,8 @@ class GitHubActionsClient:
         now: datetime | None = None,
         warning_days: int = 30,
         release_roots: dict[str, tuple[str, ...]] | None = None,
+        audit_horizon: datetime | None = None,
+        release_requirements: tuple[ReleaseRequirement, ...] = (),
         include_checks: bool = False,
         include_statuses: bool = False,
     ) -> GitHubActionsCollection:
@@ -194,7 +196,7 @@ class GitHubActionsClient:
         runs = self._list_pages(f"/repos/{owner}/{repo}/actions/runs", "workflow_runs")
         objects: dict[str, EvidenceObject] = {}
         edges: list[EvidenceEdge] = []
-        policy_version = f"github-actions:{self.api_version}"
+        policy_version = f"github-actions:{self.api_version}:0.2"
         head_shas: set[str] = set()
 
         def ensure_commit(head_sha: str, created_at: datetime | None) -> str:
@@ -211,6 +213,7 @@ class GitHubActionsClient:
                     size_bytes=None,
                     source_uri=f"https://github.com/{owner}/{repo}/commit/{head_sha}",
                     policy_version=policy_version,
+                    expiration_source="unknown",
                 )
             return commit_id
 
@@ -237,6 +240,7 @@ class GitHubActionsClient:
                 size_bytes=None,
                 source_uri=run.get("html_url") or run.get("url"),
                 policy_version=policy_version,
+                expiration_source="derived",
             )
             head_sha = run.get("head_sha")
             if head_sha:
@@ -295,6 +299,7 @@ class GitHubActionsClient:
                         size_bytes=None,
                         source_uri=check.get("html_url") or check.get("url"),
                         policy_version=policy_version,
+                        expiration_source="derived",
                     )
                     edges.append(EvidenceEdge(object_id, commit_id, "references"))
             if include_statuses:
@@ -319,6 +324,7 @@ class GitHubActionsClient:
                         size_bytes=None,
                         source_uri=status.get("target_url"),
                         policy_version=policy_version,
+                        expiration_source="derived",
                     )
                     edges.append(EvidenceEdge(object_id, commit_id, "references"))
 
@@ -333,10 +339,54 @@ class GitHubActionsClient:
         ):
             warnings.append("commit_statuses_incomplete")
 
-        releases = tuple(
-            ReleaseRequirement(release_id, now, tuple(root_ids))
-            for release_id, root_ids in (release_roots or {}).items()
-        )
+        releases = tuple(release_requirements)
+        if release_roots:
+            if audit_horizon is None:
+                warnings.append("release_audit_horizon_required")
+            else:
+                releases += tuple(
+                    ReleaseRequirement(release_id, audit_horizon, tuple(root_ids))
+                    for release_id, root_ids in release_roots.items()
+                )
+
+        def endpoint_state(path: str, *, prefix: bool = False) -> CollectionStatus:
+            entries = []
+            for entry in self.request_log:
+                url = str(entry.get("url", ""))
+                base = url.split("?", 1)[0]
+                if (base.endswith(path) if not prefix else path in base):
+                    entries.append(entry)
+            if not entries:
+                return "unknown"
+            statuses = [entry.get("status") for entry in entries]
+            if all(isinstance(status, int) and 200 <= status < 300 for status in statuses):
+                return "complete"
+            if any(isinstance(status, int) and 200 <= status < 300 for status in statuses):
+                return "partial"
+            return "failed"
+
+        collection_states: dict[str, CollectionStatus] = {
+            "repository": endpoint_state(f"/repos/{owner}/{repo}"),
+            "retention_settings": endpoint_state(
+                f"/repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention"
+            ),
+            "workflow_runs": endpoint_state(f"/repos/{owner}/{repo}/actions/runs"),
+        }
+        if runs:
+            collection_states["artifacts"] = endpoint_state(
+                f"/repos/{owner}/{repo}/actions/runs/", prefix=True
+            )
+        if include_checks:
+            collection_states["check_runs"] = endpoint_state("/check-runs", prefix=True)
+        if include_statuses:
+            collection_states["commit_statuses"] = endpoint_state("/status", prefix=True)
+        states = tuple(sorted(collection_states.items()))
+        if any(status == "failed" for _, status in states):
+            collection_status: CollectionStatus = "failed"
+        elif any(status in {"partial", "unknown"} for _, status in states):
+            collection_status = "partial"
+        else:
+            collection_status = "complete"
         unknown_objects = sum(1 for obj in objects.values() if obj.retention_status == "unknown")
         snapshot = InventorySnapshot(
             snapshot_id=f"github-actions:{owner}/{repo}:{now.isoformat()}",
@@ -353,6 +403,8 @@ class GitHubActionsClient:
                 if entry.get("status") is None or entry.get("status", 0) >= 400
             ),
             unknown_objects=unknown_objects,
+            collection_status=collection_status,
+            collection_states=states,
         )
         return GitHubActionsCollection(
             snapshot=snapshot,

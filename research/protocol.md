@@ -1,6 +1,6 @@
 # Research protocol: Evidence-Aware Retention Governance
 
-**Status:** Synthetic pilot, version 0.1
+**Status:** Synthetic pilot, version 0.2 correctness milestone
 **Date:** 2026-10-25
 
 ## Research question
@@ -52,11 +52,17 @@ Unknown state is never interpreted as safe to delete.
 All metrics expose numerator and denominator. The pilot reports:
 
 1. current evidence-chain completeness;
-2. planned evidence-chain completeness;
-3. retention-gap incidence and earliest gap lead time;
-4. unsafe deletion proposal rate;
-5. retained bytes and byte-days above the minimum required closure;
-6. API inventory coverage and failed-request counts.
+2. verified projected evidence-chain completeness after modeled actions;
+3. planned gap-resolution coverage, distinct from verified completeness;
+4. retention-gap incidence and earliest gap lead time;
+5. unsafe deletion proposal rate;
+6. retained bytes and byte-days above the minimum required closure;
+7. collection coverage, request success, unknown-object and known-size rates.
+
+A proposed `ARCHIVE` action counts toward gap-resolution coverage but does not
+count as verified projected completeness until the archive content has been
+hashed and verified. A required `CANDIDATE_FOR_DELETION`, missing dependency or
+`HOLD_FOR_REVIEW` always fails projected completeness.
 
 The benchmark ground truth is synthetic and therefore permits exact invariant
 checks. Real inventories will be treated as partial observations, not as proof
@@ -64,8 +70,10 @@ that unavailable evidence never existed.
 
 ## Baselines
 
-- Native/provider-like retention with no cross-service dependency reasoning.
-- Independent TTL decisions over explicitly named release objects.
+- Native/provider-like retention with no cross-service dependency reasoning,
+  simulated through the workload horizon from each object's provider expiration.
+- Independent TTL decisions over each object's own expiration, without
+  transitive dependency reasoning.
 - Conservative retention of every inventoried object.
 - Dependency-aware dry-run planner.
 

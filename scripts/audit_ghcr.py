@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from retention_governance.providers.ghcr import GHCRClient
 from retention_governance.providers.github_actions import UrllibTransport
+from retention_governance.schema import ReleaseRequirement, parse_time
 
 
 def main() -> int:
@@ -16,13 +17,25 @@ def main() -> int:
     parser.add_argument('--reference', required=True, help='Tag or immutable digest reference.')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--release-id')
+    parser.add_argument('--audit-horizon', help='Explicit horizon required with --release-id.')
+    parser.add_argument('--release-requirements', type=Path, help='JSON list with release_id, audit_horizon and required_object_ids.')
     parser.add_argument('--token-env', default='GITHUB_TOKEN')
+    parser.add_argument('--username-env', default='GITHUB_USERNAME')
     parser.add_argument('--no-fetch-children', action='store_true')
     args=parser.parse_args()
     token=os.environ.get(args.token_env)
-    collection=GHCRClient(token=token, transport=UrllibTransport()).collect(
+    username=os.environ.get(args.username_env)
+    release_requirements=()
+    if args.release_requirements:
+        release_requirements=tuple(
+            ReleaseRequirement.from_dict(item)
+            for item in json.loads(args.release_requirements.read_text())
+        )
+    collection=GHCRClient(token=token, username=username, transport=UrllibTransport()).collect(
         args.owner, args.package, args.reference,
         release_id=args.release_id,
+        audit_horizon=parse_time(args.audit_horizon),
+        release_requirements=release_requirements,
         fetch_children=not args.no_fetch_children,
     )
     payload={
