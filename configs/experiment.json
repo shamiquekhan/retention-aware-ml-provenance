@@ -1,0 +1,30 @@
+{
+  "version": "0.1",
+  "mode": "synthetic_read_only_dry_run",
+  "clock": "scenario_manifest",
+  "strategies": [
+    "native",
+    "independent_ttl",
+    "conservative",
+    "dependency_aware"
+  ],
+  "primary_metrics": [
+    "current_evidence_chain_completeness",
+    "planned_evidence_chain_completeness",
+    "retention_gap_incidence",
+    "unsafe_deletion_proposal_rate"
+  ],
+  "efficiency_metrics": [
+    "retention_overhead_bytes",
+    "retention_overhead_byte_days"
+  ],
+  "operational_metrics": [
+    "inventory_coverage",
+    "api_requests",
+    "failed_requests",
+    "unknown_objects"
+  ],
+  "destructive_execution": false,
+  "provider_adapters": false,
+  "benchmark_manifest": "scenarios/pilot.json"
+}

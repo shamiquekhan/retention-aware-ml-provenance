@@ -1,0 +1,517 @@
+{
+  "benchmark_version": "0.1",
+  "description": "Synthetic retention-governance pilot with known dependency and expiry outcomes.",
+  "cases": [
+    {
+      "case_id": "complete_multiarch",
+      "description": "Complete release evidence with a retained OCI index and two child manifests.",
+      "inventory": {
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "now": "2026-10-25T00:00:00+00:00",
+        "policy_version": "retention-policy-0.1",
+        "snapshot_id": "snapshot-complete",
+        "objects": [
+          {
+            "object_id": "release-complete",
+            "provider": "github",
+            "object_type": "release-record",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:release",
+            "size_bytes": 10,
+            "source_uri": "github://release-complete",
+            "policy_version": "retention-policy-0.1",
+            "protected": true,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "workflow-complete",
+            "provider": "github_actions",
+            "object_type": "workflow-run",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-11-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:workflow",
+            "size_bytes": 100,
+            "source_uri": "github_actions://workflow-complete",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "config-complete",
+            "provider": "github",
+            "object_type": "training-config",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:config",
+            "size_bytes": 20,
+            "source_uri": "github://config-complete",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "index-complete",
+            "provider": "ghcr",
+            "object_type": "oci-index",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:index",
+            "size_bytes": 50,
+            "source_uri": "ghcr://index-complete",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "child-amd64",
+            "provider": "ghcr",
+            "object_type": "oci-manifest",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:amd64",
+            "size_bytes": 80,
+            "source_uri": "ghcr://child-amd64",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "child-arm64",
+            "provider": "ghcr",
+            "object_type": "oci-manifest",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:arm64",
+            "size_bytes": 80,
+            "source_uri": "ghcr://child-arm64",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "unused-build",
+            "provider": "github_actions",
+            "object_type": "artifact",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2026-11-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:unused",
+            "size_bytes": 500,
+            "source_uri": "github_actions://unused-build",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          }
+        ],
+        "edges": [
+          {
+            "dependent_id": "release-complete",
+            "prerequisite_id": "workflow-complete",
+            "relation": "generated_by"
+          },
+          {
+            "dependent_id": "release-complete",
+            "prerequisite_id": "config-complete",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "release-complete",
+            "prerequisite_id": "index-complete",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "index-complete",
+            "prerequisite_id": "child-amd64",
+            "relation": "child_of"
+          },
+          {
+            "dependent_id": "index-complete",
+            "prerequisite_id": "child-arm64",
+            "relation": "child_of"
+          }
+        ],
+        "releases": [
+          {
+            "release_id": "release-complete",
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "required_object_ids": [
+              "release-complete"
+            ]
+          }
+        ],
+        "api_requests": 10,
+        "failed_requests": 0,
+        "unknown_objects": 0
+      },
+      "expected": {
+        "dependency_aware_actions": {
+          "child-amd64": "PRESERVE_DEPENDENCY",
+          "child-arm64": "PRESERVE_DEPENDENCY"
+        }
+      }
+    },
+    {
+      "case_id": "expiring_required_evidence",
+      "description": "Required workflow evidence expires before the audit horizon and has no archive.",
+      "inventory": {
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "now": "2026-10-25T00:00:00+00:00",
+        "policy_version": "retention-policy-0.1",
+        "snapshot_id": "snapshot-expiring",
+        "objects": [
+          {
+            "object_id": "release-expiring",
+            "provider": "github",
+            "object_type": "release-record",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:release2",
+            "size_bytes": 10,
+            "source_uri": "github://release-expiring",
+            "policy_version": "retention-policy-0.1",
+            "protected": true,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "workflow-expiring",
+            "provider": "github_actions",
+            "object_type": "workflow-log",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2026-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:workflow2",
+            "size_bytes": 100,
+            "source_uri": "github_actions://workflow-expiring",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          }
+        ],
+        "edges": [
+          {
+            "dependent_id": "release-expiring",
+            "prerequisite_id": "workflow-expiring",
+            "relation": "generated_by"
+          }
+        ],
+        "releases": [
+          {
+            "release_id": "release-expiring",
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "required_object_ids": [
+              "release-expiring"
+            ]
+          }
+        ],
+        "api_requests": 8,
+        "failed_requests": 0,
+        "unknown_objects": 0
+      },
+      "expected": {
+        "dependency_aware_actions": {
+          "workflow-expiring": "ARCHIVE"
+        }
+      }
+    },
+    {
+      "case_id": "verified_archive",
+      "description": "Expired source evidence remains available through a verified content-addressed archive.",
+      "inventory": {
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "now": "2026-10-25T00:00:00+00:00",
+        "policy_version": "retention-policy-0.1",
+        "snapshot_id": "snapshot-archive",
+        "objects": [
+          {
+            "object_id": "release-archived",
+            "provider": "github",
+            "object_type": "release-record",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:release3",
+            "size_bytes": 10,
+            "source_uri": "github://release-archived",
+            "policy_version": "retention-policy-0.1",
+            "protected": true,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "workflow-archived",
+            "provider": "github_actions",
+            "object_type": "workflow-log",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2026-09-01T00:00:00+00:00",
+            "retention_status": "expired",
+            "digest": "sha256:workflow3",
+            "size_bytes": 100,
+            "source_uri": "github_actions://workflow-archived",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "verified",
+              "digest": "sha256:workflow3",
+              "verified_at": "2026-10-20T00:00:00+00:00",
+              "accessible": true
+            }
+          }
+        ],
+        "edges": [
+          {
+            "dependent_id": "release-archived",
+            "prerequisite_id": "workflow-archived",
+            "relation": "generated_by"
+          }
+        ],
+        "releases": [
+          {
+            "release_id": "release-archived",
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "required_object_ids": [
+              "release-archived"
+            ]
+          }
+        ],
+        "api_requests": 7,
+        "failed_requests": 0,
+        "unknown_objects": 0
+      },
+      "expected": {
+        "dependency_aware_actions": {
+          "workflow-archived": "PRESERVE_DEPENDENCY"
+        }
+      }
+    },
+    {
+      "case_id": "unknown_manifest_dependency",
+      "description": "A retained parent index references a child digest missing from inventory.",
+      "inventory": {
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "now": "2026-10-25T00:00:00+00:00",
+        "policy_version": "retention-policy-0.1",
+        "snapshot_id": "snapshot-unknown",
+        "objects": [
+          {
+            "object_id": "release-unknown",
+            "provider": "github",
+            "object_type": "release-record",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:release4",
+            "size_bytes": 10,
+            "source_uri": "github://release-unknown",
+            "policy_version": "retention-policy-0.1",
+            "protected": true,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "index-unknown",
+            "provider": "ghcr",
+            "object_type": "oci-index",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:index4",
+            "size_bytes": 50,
+            "source_uri": "ghcr://index-unknown",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          }
+        ],
+        "edges": [
+          {
+            "dependent_id": "release-unknown",
+            "prerequisite_id": "index-unknown",
+            "relation": "references"
+          },
+          {
+            "dependent_id": "index-unknown",
+            "prerequisite_id": "missing-child",
+            "relation": "child_of"
+          }
+        ],
+        "releases": [
+          {
+            "release_id": "release-unknown",
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "required_object_ids": [
+              "release-unknown"
+            ]
+          }
+        ],
+        "api_requests": 6,
+        "failed_requests": 1,
+        "unknown_objects": 1
+      },
+      "expected": {
+        "dependency_aware_actions": {
+          "missing-child": "HOLD_FOR_REVIEW"
+        }
+      }
+    },
+    {
+      "case_id": "shared_digest",
+      "description": "Two registry references share one digest; the release dependency keeps the content.",
+      "inventory": {
+        "captured_at": "2026-10-25T00:00:00+00:00",
+        "now": "2026-10-25T00:00:00+00:00",
+        "policy_version": "retention-policy-0.1",
+        "snapshot_id": "snapshot-shared",
+        "objects": [
+          {
+            "object_id": "release-shared",
+            "provider": "github",
+            "object_type": "release-record",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:release5",
+            "size_bytes": 10,
+            "source_uri": "github://release-shared",
+            "policy_version": "retention-policy-0.1",
+            "protected": true,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "shared-child",
+            "provider": "ghcr",
+            "object_type": "oci-manifest",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2027-12-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:shared",
+            "size_bytes": 75,
+            "source_uri": "ghcr://shared-child",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          },
+          {
+            "object_id": "tag-only",
+            "provider": "ghcr",
+            "object_type": "tag",
+            "created_at": "2026-10-01T00:00:00+00:00",
+            "expires_at": "2026-11-01T00:00:00+00:00",
+            "retention_status": "available",
+            "digest": "sha256:shared",
+            "size_bytes": 0,
+            "source_uri": "ghcr://tag-only",
+            "policy_version": "retention-policy-0.1",
+            "protected": false,
+            "archive": {
+              "status": "none",
+              "digest": null,
+              "verified_at": null,
+              "accessible": false
+            }
+          }
+        ],
+        "edges": [
+          {
+            "dependent_id": "release-shared",
+            "prerequisite_id": "shared-child",
+            "relation": "references"
+          }
+        ],
+        "releases": [
+          {
+            "release_id": "release-shared",
+            "audit_horizon": "2027-10-25T00:00:00+00:00",
+            "required_object_ids": [
+              "release-shared"
+            ]
+          }
+        ],
+        "api_requests": 9,
+        "failed_requests": 0,
+        "unknown_objects": 0
+      },
+      "expected": {
+        "dependency_aware_actions": {
+          "shared-child": "PRESERVE_DEPENDENCY",
+          "tag-only": "CANDIDATE_FOR_DELETION"
+        }
+      }
+    }
+  ]
+}
